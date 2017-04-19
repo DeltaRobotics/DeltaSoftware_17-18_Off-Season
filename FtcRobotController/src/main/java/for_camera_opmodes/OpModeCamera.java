@@ -1,5 +1,6 @@
 package for_camera_opmodes;
 
+
 import android.app.Application;
 import android.content.Context;
 import android.content.ContextWrapper;

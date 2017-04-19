@@ -47,6 +47,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     android:layout_height="80dp"
     android:background="@color/black">
 
+
     <ImageView
       android:id="@+id/robotIcon"
       android:src="@drawable/icon_robotcontroller"
@@ -79,8 +80,17 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       android:layout_centerHorizontal="true"
       android:layout_margin="10dp"/>
 
+    <FrameLayout
+        android:layout_width="100dp"
+        android:layout_height="125dp"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/previewLayout">
+
+    </FrameLayout>
+
   </RelativeLayout>
   <!-- end of black bar -->
+
 
   <include layout="@layout/header"
            android:id="@+id/included_header"/>
@@ -183,3 +193,4 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     android:layout_height="1dp" />
 
 </LinearLayout>
+
