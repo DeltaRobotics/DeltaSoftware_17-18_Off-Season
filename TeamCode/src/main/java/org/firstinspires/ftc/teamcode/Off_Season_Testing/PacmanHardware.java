@@ -19,6 +19,10 @@ public class PacmanHardware
 
     public Servo popper = null;
 
+    public DcMotor collector = null;
+
+    public DcMotor lift = null;
+
     HardwareMap hwMap = null;
 
     PacmanHardware()
@@ -37,7 +41,11 @@ public class PacmanHardware
 
         launcher = hwMap.dcMotor.get("launcherWheel");
 
+        collector = hwMap.dcMotor.get("collector");
+
         popper = hwMap.servo.get("popper");
+
+        lift = hwMap.dcMotor.get("motorLift");
 
         motorL.setPower(0.0);
         motorR.setPower(0.0);

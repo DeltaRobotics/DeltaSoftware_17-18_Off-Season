@@ -23,8 +23,23 @@ public class TeleOpLinear extends LinearOpMode
     double popperDown = 0.94;
     double popperPosition = 0.94;
 
+    double collectorPower = 0.0;
+
+    double liftPower = 0.0;
+
     boolean dpadUpState = false;
     boolean dpadDownState = false;
+
+    boolean leftBumperState = false;
+    boolean rightBumperState = false;
+
+    boolean leftTriggerState = false;
+
+    boolean collector = false;
+
+    boolean collectorDirection = false;
+
+    boolean launcher = false;
 
     @Override
     public void runOpMode()
@@ -38,37 +53,29 @@ public class TeleOpLinear extends LinearOpMode
             leftPower = -gamepad1.left_stick_y;
             rightPower = gamepad1.right_stick_y;
 
-            if(gamepad2.a)
-            {
-                launcherPower = 0.5;
-            }
+            //if(gamepad1.left_trigger > 0.8)
 
-            if(gamepad2.b)
-            {
-                launcherPower = 0.0;
-            }
-
-            if(gamepad2.dpad_up && !dpadUpState)
+            if(gamepad1.dpad_up && !dpadUpState)
             {
                 dpadUpState = true;
                 launcherPower += 0.005;
             }
-            else if(!gamepad2.dpad_up)
+            else if(!gamepad1.dpad_up)
             {
                 dpadUpState = false;
             }
 
-            if(gamepad2.dpad_down && !dpadDownState)
+            if(gamepad1.dpad_down && !dpadDownState)
             {
                 dpadDownState = true;
                 launcherPower -= 0.005;
             }
-            else if(!gamepad2.dpad_down)
+            else if(!gamepad1.dpad_down)
             {
                 dpadDownState = false;
             }
 
-            if(gamepad2.right_trigger > .8)
+            if(gamepad1.right_trigger > .8)
             {
                 popperPosition = popperUp;
             }
@@ -76,6 +83,52 @@ public class TeleOpLinear extends LinearOpMode
             {
                 popperPosition = popperDown;
             }
+
+            if(gamepad1.left_bumper && !leftBumperState)
+            {
+                leftBumperState = true;
+                collector = !collector;
+            }
+            else if(!gamepad1.left_bumper)
+            {
+                leftBumperState = false;
+            }
+
+            if (collector)
+            {
+                beast.collector.setPower(collectorPower);
+                beast.lift.setPower(liftPower);
+            }
+            else
+            {
+                collectorPower = 0.0;
+                liftPower = 0.0;
+                beast.collector.setPower(collectorPower);
+                beast.lift.setPower(liftPower);
+            }
+
+            if(gamepad1.right_bumper && !rightBumperState)
+            {
+                rightBumperState = true;
+                collectorDirection = !collectorDirection;
+            }
+            else if(!gamepad1.right_bumper)
+            {
+                rightBumperState = false;
+            }
+
+            if(collectorDirection && collector)
+            {
+                collectorPower = 0.3;
+                liftPower = 0.3;
+            }
+            else if(!collectorDirection && collector)
+            {
+                collectorPower = -0.3;
+                liftPower = -0.3;
+            }
+
+
 
             beast.motorL.setPower(leftPower);
             beast.motorLF.setPower(leftPower);
@@ -85,6 +138,7 @@ public class TeleOpLinear extends LinearOpMode
             beast.popper.setPosition(popperPosition);
 
             telemetry.addData("Launcher Power", launcherPower);
+            telemetry.addData("Colletor Power", collectorPower);
             telemetry.update();
         }
     }
