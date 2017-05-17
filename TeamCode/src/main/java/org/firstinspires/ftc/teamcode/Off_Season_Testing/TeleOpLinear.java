@@ -27,19 +27,21 @@ public class TeleOpLinear extends LinearOpMode
 
     double liftPower = 0.0;
 
+    double lastLauncherPower = 0.7;
+
     boolean dpadUpState = false;
     boolean dpadDownState = false;
 
     boolean leftBumperState = false;
     boolean rightBumperState = false;
 
-    boolean leftTriggerState = false;
 
     boolean collector = false;
 
     boolean collectorDirection = false;
 
     boolean launcher = false;
+
 
     @Override
     public void runOpMode()
@@ -53,22 +55,22 @@ public class TeleOpLinear extends LinearOpMode
             leftPower = -gamepad1.left_stick_y;
             rightPower = gamepad1.right_stick_y;
 
-            //if(gamepad1.left_trigger > 0.8)
-
-            if(gamepad1.dpad_up && !dpadUpState)
+            if(gamepad1.dpad_up && !dpadUpState && launcher)
             {
                 dpadUpState = true;
                 launcherPower += 0.005;
+                lastLauncherPower = launcherPower;
             }
             else if(!gamepad1.dpad_up)
             {
                 dpadUpState = false;
             }
 
-            if(gamepad1.dpad_down && !dpadDownState)
+            if(gamepad1.dpad_down && !dpadDownState && launcher)
             {
                 dpadDownState = true;
                 launcherPower -= 0.005;
+                lastLauncherPower = launcherPower;
             }
             else if(!gamepad1.dpad_down)
             {
@@ -82,6 +84,18 @@ public class TeleOpLinear extends LinearOpMode
             else
             {
                 popperPosition = popperDown;
+            }
+
+            if(gamepad1.b)
+            {
+                launcher = false;
+                launcherPower = 0.0;
+            }
+
+            if(gamepad1.a)
+            {
+                launcher = true;
+                launcherPower = lastLauncherPower;
             }
 
             if(gamepad1.left_bumper && !leftBumperState)
@@ -139,6 +153,7 @@ public class TeleOpLinear extends LinearOpMode
 
             telemetry.addData("Launcher Power", launcherPower);
             telemetry.addData("Colletor Power", collectorPower);
+            telemetry.addData("Last Launcher Power", lastLauncherPower);
             telemetry.update();
         }
     }
