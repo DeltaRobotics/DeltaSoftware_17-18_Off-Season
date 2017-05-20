@@ -11,42 +11,57 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 @TeleOp (name = "TeleLinear", group = "")
 public class TeleOpLinear extends LinearOpMode
 {
+    // Object of the robot's hardware
     PacmanHardware beast = new PacmanHardware();
 
+    // Keeps the elapsed time
     ElapsedTime runtime = new ElapsedTime();
 
+    // Powers for the left and right wheels
     double leftPower = 0.0;
     double rightPower = 0.0;
 
+    // Power for the launcher
     double launcherPower = 0.0;
+
+    // Positions popper will be set at
     double popperUp = 0.69;
     double popperDown = 0.94;
     double popperPosition = 0.94;
 
+    // Power the collector will run at
     double collectorPower = 0.0;
 
+    // Power the lift will run at
     double liftPower = 0.0;
 
+    // Last known power the launcher had before it stopped
     double lastLauncherPower = 0.7;
 
+    // State variables that get the current state of the d-pad down and up buttons
     boolean dpadUpState = false;
     boolean dpadDownState = false;
 
+    // State variables that get the current state of the left and right bumpers
     boolean leftBumperState = false;
     boolean rightBumperState = false;
 
-
+    // State of collector
     boolean collector = false;
 
+    // Variable that keeps track of the collectors direction
     boolean collectorDirection = false;
 
+    // State of the launcher
     boolean launcher = false;
 
+    boolean fastIncrement = false;
 
     @Override
     public void runOpMode()
     {
         beast.init(hardwareMap);
+
 
         waitForStart();
 
@@ -60,6 +75,27 @@ public class TeleOpLinear extends LinearOpMode
                 dpadUpState = true;
                 launcherPower += 0.005;
                 lastLauncherPower = launcherPower;
+                double constant = getRuntime();
+                while (gamepad1.dpad_up)
+                {
+                    if (getRuntime() >= constant + 1500)
+                    {
+                        telemetry.addData("It Worked", "");
+                        fastIncrement = true;
+                    }
+
+                    if (fastIncrement)
+                    {
+                        while(gamepad1.dpad_up)
+                        {
+                            telemetry.update();
+                            sleep(150);
+                            launcherPower += 0.005;
+                            lastLauncherPower = launcherPower;
+                        }
+                    }
+                }
+                fastIncrement = false;
             }
             else if(!gamepad1.dpad_up)
             {
@@ -157,4 +193,6 @@ public class TeleOpLinear extends LinearOpMode
             telemetry.update();
         }
     }
+
+
 }
