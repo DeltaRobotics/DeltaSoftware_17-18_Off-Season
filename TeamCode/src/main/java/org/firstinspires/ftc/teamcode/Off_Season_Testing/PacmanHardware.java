@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.Off_Season_Testing;
 
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -14,6 +15,8 @@ public class PacmanHardware
     public DcMotor motorR = null;
     public DcMotor motorRF = null;
     public DcMotor motorLF = null;
+
+    public ColorSensor leftColor = null;
 
     public DcMotor launcher = null;
 
@@ -47,6 +50,8 @@ public class PacmanHardware
 
         lift = hwMap.dcMotor.get("motorLift");
 
+        leftColor = hMap.colorSensor.get("leftColor");
+
         motorL.setPower(0.0);
         motorR.setPower(0.0);
         motorLF.setPower(0.0);
@@ -55,5 +60,7 @@ public class PacmanHardware
         launcher.setPower(0.0);
 
         popper.setPosition(0.94);
+
+        leftColor.enableLed(true);
     }
 }
