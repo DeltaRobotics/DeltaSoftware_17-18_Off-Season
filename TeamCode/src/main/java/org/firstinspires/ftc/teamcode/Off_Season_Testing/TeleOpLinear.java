@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.Off_Season_Testing;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.I2cAddr;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 /**
@@ -57,10 +58,15 @@ public class TeleOpLinear extends LinearOpMode
 
     boolean fastIncrement = false;
 
+    boolean colorTelemetry = true;
+
     @Override
     public void runOpMode()
     {
         beast.init(hardwareMap);
+
+        beast.leftColor.setI2cAddress(I2cAddr.create7bit(0x2c));
+        beast.rightColor.setI2cAddress(I2cAddr.create7bit(0x4c));
 
 
         waitForStart();
@@ -179,7 +185,6 @@ public class TeleOpLinear extends LinearOpMode
             }
 
 
-
             beast.motorL.setPower(leftPower);
             beast.motorLF.setPower(leftPower);
             beast.motorR.setPower(rightPower);
@@ -188,8 +193,19 @@ public class TeleOpLinear extends LinearOpMode
             beast.popper.setPosition(popperPosition);
 
             telemetry.addData("Launcher Power", launcherPower);
-            telemetry.addData("Colletor Power", collectorPower);
+            telemetry.addData("Collector Power", collectorPower);
             telemetry.addData("Last Launcher Power", lastLauncherPower);
+
+            if(colorTelemetry)
+            {
+                telemetry.addData("Left Red", beast.leftColor.red());
+                telemetry.addData("Left Green", beast.leftColor.green());
+                telemetry.addData("Left Blue", beast.leftColor.blue());
+                telemetry.addData("Right Red", beast.rightColor.red());
+                telemetry.addData("Right Green", beast.rightColor.green());
+                telemetry.addData("Right Blue", beast.rightColor.blue());
+            }
+
             telemetry.update();
         }
     }

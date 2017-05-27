@@ -47,7 +47,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     android:layout_height="80dp"
     android:background="@color/black">
 
-
     <ImageView
       android:id="@+id/robotIcon"
       android:src="@drawable/icon_robotcontroller"
@@ -90,7 +89,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
   </RelativeLayout>
   <!-- end of black bar -->
-
 
   <include layout="@layout/header"
            android:id="@+id/included_header"/>
@@ -193,4 +191,3 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     android:layout_height="1dp" />
 
 </LinearLayout>
-

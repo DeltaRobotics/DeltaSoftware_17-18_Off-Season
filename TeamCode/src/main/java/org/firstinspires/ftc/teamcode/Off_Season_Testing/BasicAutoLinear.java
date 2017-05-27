@@ -247,7 +247,7 @@ public class BasicAutoLinear extends LinearOpMode {
     }
 
     //Runs motors until robot runs over a color on the field (color specified by the "red", "green", and "blue" variables)
-    public boolean stopAtColor(int motorPower, boolean direction, ColorSensor cSensor, int encTimeout, DcMotor encTimeoutMotor, int red, int green, int blue, boolean telemetryOn)
+    public boolean stopAtColor(int motorPower, boolean direction, ColorSensor cSensor, int encTimeout, DcMotor encMotor, int red, int green, int blue, boolean telemetryOn)
     {
         //Determines which way the motors should go based on the "direction" argument
         if (direction)
@@ -266,7 +266,7 @@ public class BasicAutoLinear extends LinearOpMode {
         }
 
         //Checks to see if the robot has run over the color or has reached the timeout encoder value
-        while(!compareColor(cSensor, red, green, blue, 50) && encTimeoutMotor.getCurrentPosition() < encTimeout)
+        while(!compareColor(cSensor, red, green, blue, 50) && encMotor.getCurrentPosition() < encTimeout)
         {
             //Determines to show telemetry or not based on the "telemetryOn" argument
             if(telemetryOn)
@@ -277,7 +277,8 @@ public class BasicAutoLinear extends LinearOpMode {
                 telemetry.addData("Blue", cSensor.blue());
 
                 //Sends back to the user the current encoder value of the "encTimeoutMotor" motor
-                telemetry.addData("Encoder", encTimeoutMotor.getCurrentPosition());
+                telemetry.addData("Encoder", encMotor.getCurrentPosition());
+                telemetry.update();
             }
         }
 
@@ -288,7 +289,7 @@ public class BasicAutoLinear extends LinearOpMode {
         beast.motorRF.setPower(0.0);
 
         //Checks to see if the robot stopped due to the encoder timeout
-        if (encTimeoutMotor.getCurrentPosition() > encTimeout)
+        if (encMotor.getCurrentPosition() > encTimeout)
         {
             return false;
         }
