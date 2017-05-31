@@ -44,8 +44,12 @@ public class BasicAutoLinear extends LinearOpMode {
         waitForStart();
 
 
-        encoderTurn(0.65, 5000, true, turnStyle.PERCENT_RIGHT, 0.25);
-        encoderTurn(0.65, 5000, true, turnStyle.PERCENT_LEFT, 0.25);
+        if(stopAtColor(.70, true, beast.leftColor, 10000, beast.motorL, 16, 16, 19, true))
+        {
+            telemetry.addData("Result", "Complete");
+            telemetry.update();
+            sleep(2000);
+        }
 
 
     }
@@ -247,7 +251,7 @@ public class BasicAutoLinear extends LinearOpMode {
     }
 
     //Runs motors until robot runs over a color on the field (color specified by the "red", "green", and "blue" variables)
-    public boolean stopAtColor(int motorPower, boolean direction, ColorSensor cSensor, int encTimeout, DcMotor encMotor, int red, int green, int blue, boolean telemetryOn)
+    public boolean stopAtColor(double motorPower, boolean direction, ColorSensor cSensor, int encTimeout, DcMotor encMotor, int red, int green, int blue, boolean telemetryOn)
     {
         //Determines which way the motors should go based on the "direction" argument
         if (direction)
@@ -266,7 +270,7 @@ public class BasicAutoLinear extends LinearOpMode {
         }
 
         //Checks to see if the robot has run over the color or has reached the timeout encoder value
-        while(!compareColor(cSensor, red, green, blue, 50) && encMotor.getCurrentPosition() < encTimeout)
+        while(!compareColor(cSensor, red, green, blue, 5) && (Math.abs(encMotor.getCurrentPosition())) < encTimeout)
         {
             //Determines to show telemetry or not based on the "telemetryOn" argument
             if(telemetryOn)
@@ -295,7 +299,7 @@ public class BasicAutoLinear extends LinearOpMode {
         }
 
         //Checks to see if the robot stopped because it ran over the specified color
-        if(compareColor(cSensor, red, green, blue, 50))
+        if(compareColor(cSensor, red, green, blue, 5))
         {
             return true;
         }
@@ -312,9 +316,9 @@ public class BasicAutoLinear extends LinearOpMode {
     //Checks to see if the "cSensor" color sensor's red, green, and blue values match values specified by the arguments below
     public boolean compareColor(ColorSensor cSensor, int red, int green, int blue, int range)
     {
-        if((cSensor.red() < red + range || cSensor.red() > red - range)  &&
-           (cSensor.green() < green + range || cSensor.green() > green - range) &&
-           (cSensor.blue() < blue + range || cSensor.blue() > blue - range))
+        if((cSensor.red() < red + range && cSensor.red() > red - range)  &&
+           (cSensor.green() < green + range && cSensor.green() > green - range) &&
+           (cSensor.blue() < blue + range && cSensor.blue() > blue - range))
         {
              return true;
         }

@@ -65,8 +65,8 @@ public class TeleOpLinear extends LinearOpMode
     {
         beast.init(hardwareMap);
 
-        beast.leftColor.setI2cAddress(I2cAddr.create7bit(0x2c));
-        beast.rightColor.setI2cAddress(I2cAddr.create7bit(0x4c));
+        //beast.rightColor.setI2cAddress(I2cAddr.create8bit(0x3c));
+        beast.rightColor.setI2cAddress(I2cAddr.create8bit(0x2c));
 
 
         waitForStart();
