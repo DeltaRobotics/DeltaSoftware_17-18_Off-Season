@@ -44,7 +44,7 @@ public class BasicAutoLinear extends LinearOpMode {
         waitForStart();
 
 
-        if(stopAtColor(.70, true, beast.leftColor, 10000, beast.motorL, 16, 16, 19, true))
+        if(stopAtColor(.70, false, beast.leftColor, 10000, beast.motorL, 16, 16, 19, true))
         {
             telemetry.addData("Result", "Complete");
             telemetry.update();

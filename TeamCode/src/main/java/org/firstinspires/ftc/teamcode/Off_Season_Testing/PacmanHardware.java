@@ -27,6 +27,10 @@ public class PacmanHardware
 
     public DcMotor lift = null;
 
+    public DcMotor LEDRed = null;
+    public DcMotor LEDGreen = null;
+    public DcMotor LEDBlue = null;
+
     HardwareMap hwMap = null;
 
     PacmanHardware()
@@ -51,6 +55,10 @@ public class PacmanHardware
 
         lift = hwMap.dcMotor.get("motorLift");
 
+        LEDRed = hwMap.dcMotor.get("LEDRed");
+        LEDGreen = hwMap.dcMotor.get("LEDGreen");
+        LEDBlue = hwMap.dcMotor.get("LEDBlue");
+
         leftColor = hMap.colorSensor.get("leftColor");
         rightColor = hMap.colorSensor.get("rightColor");
 
@@ -62,6 +70,14 @@ public class PacmanHardware
         launcher.setPower(0.0);
 
         popper.setPosition(0.94);
+
+        LEDRed.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        LEDGreen.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        LEDBlue.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+
+        LEDRed.setPower(0.01);
+        LEDGreen.setPower(0.01);
+        LEDBlue.setPower(0.01);
 
         leftColor.enableLed(true);
         rightColor.enableLed(true);
