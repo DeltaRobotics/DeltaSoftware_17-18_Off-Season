@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.I2cAddr;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.util.Range;
 
 /**
  * Created by User on 4/29/2017.
@@ -56,52 +57,45 @@ public class TeleOpLinear extends LinearOpMode
     // State of the launcher
     boolean launcher = false;
 
-    boolean fastIncrement = false;
+    // Variable that determines if the program should display the telemetry relating to the color sensor
+    boolean colorTelemetry = false;
 
-    boolean colorTelemetry = true;
+    // Value the launcherPower variable increments/decrements by
+    double incrementValue = 0.005;
+
+    // False = regular increment
+    // True = fast increment
+    boolean incrementValueState = false;
+
+    // State for the back button
+    boolean backState = false;
 
     @Override
+    // Runs opMode
     public void runOpMode()
     {
+        // Inits the hardware on the robot
         beast.init(hardwareMap);
 
         //beast.rightColor.setI2cAddress(I2cAddr.create8bit(0x3c));
         beast.rightColor.setI2cAddress(I2cAddr.create8bit(0x2c));
 
-
+        // Waits for user to press the start button
         waitForStart();
 
+        // Verifys that the opMode is still active
         while(opModeIsActive())
         {
+            // Sets the leftPower and rightPower variables to the current value of the joysticks y value corresponding to their appropriate sides
             leftPower = -gamepad1.left_stick_y;
             rightPower = gamepad1.right_stick_y;
 
             if(gamepad1.dpad_up && !dpadUpState && launcher)
             {
                 dpadUpState = true;
-                launcherPower += 0.005;
+                launcherPower += incrementValue;
                 lastLauncherPower = launcherPower;
-                double constant = getRuntime();
-                while (gamepad1.dpad_up)
-                {
-                    if (getRuntime() >= constant + 1500)
-                    {
-                        telemetry.addData("It Worked", "");
-                        fastIncrement = true;
-                    }
 
-                    if (fastIncrement)
-                    {
-                        while(gamepad1.dpad_up)
-                        {
-                            telemetry.update();
-                            sleep(150);
-                            launcherPower += 0.005;
-                            lastLauncherPower = launcherPower;
-                        }
-                    }
-                }
-                fastIncrement = false;
             }
             else if(!gamepad1.dpad_up)
             {
@@ -111,7 +105,7 @@ public class TeleOpLinear extends LinearOpMode
             if(gamepad1.dpad_down && !dpadDownState && launcher)
             {
                 dpadDownState = true;
-                launcherPower -= 0.005;
+                launcherPower -= incrementValue;
                 lastLauncherPower = launcherPower;
             }
             else if(!gamepad1.dpad_down)
@@ -138,6 +132,25 @@ public class TeleOpLinear extends LinearOpMode
             {
                 launcher = true;
                 launcherPower = lastLauncherPower;
+            }
+
+            if(incrementValueState)
+            {
+                incrementValue = 0.005;
+            }
+            else
+            {
+                incrementValue= 0.05;
+            }
+
+            if(gamepad1.back && backState == false)
+            {
+                backState = true;
+                incrementValueState = !incrementValueState;
+            }
+            else if (!gamepad1.back)
+            {
+                backState = false;
             }
 
             if(gamepad1.left_bumper && !leftBumperState)
@@ -184,6 +197,8 @@ public class TeleOpLinear extends LinearOpMode
                 liftPower = -0.3;
             }
 
+            Range.clip(launcherPower, 0.005, 1.0);
+
 
             beast.motorL.setPower(leftPower);
             beast.motorLF.setPower(leftPower);
@@ -195,6 +210,7 @@ public class TeleOpLinear extends LinearOpMode
             telemetry.addData("Launcher Power", launcherPower);
             telemetry.addData("Collector Power", collectorPower);
             telemetry.addData("Last Launcher Power", lastLauncherPower);
+            telemetry.addData("incrementValueState", incrementValueState);
 
             if(colorTelemetry)
             {
