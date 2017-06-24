@@ -6,7 +6,11 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.GyroSensor;
+import com.qualcomm.robotcore.hardware.Gyroscope;
+import com.qualcomm.robotcore.hardware.OpticalDistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.TouchSensor;
 
 /**
  * Created by User on 6/20/2017.
@@ -21,7 +25,10 @@ public class RevModuleTest extends LinearOpMode
 
     Servo servo;
 
-    ColorSensor cSensor;
+    //ColorSensor cSensor;
+    //TouchSensor tSensor;
+    OpticalDistanceSensor ods;
+    GyroSensor gSensor;
 
     double leftMotorPower = 0.0;
     double rightMotorPower = 0.0;
@@ -34,9 +41,19 @@ public class RevModuleTest extends LinearOpMode
 
         servo = hardwareMap.servo.get("servo");
 
-        cSensor = hardwareMap.colorSensor.get("cSensor");
+        //cSensor = hardwareMap.colorSensor.get("cSensor");
 
-        cSensor.enableLed(true);
+        //tSensor = hardwareMap.touchSensor.get("tSensor");
+
+        ods = hardwareMap.opticalDistanceSensor.get("ods");
+        
+
+
+        //cSensor.enableLed(true);
+        ods.enableLed(true);
+
+        motorL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         waitForStart();
         while (opModeIsActive())
@@ -57,9 +74,14 @@ public class RevModuleTest extends LinearOpMode
             motorL.setPower(leftMotorPower);
             motorR.setPower(rightMotorPower);
 
-            telemetry.addData("Red", cSensor.red());
-            telemetry.addData("Green", cSensor.green());
-            telemetry.addData("Blue", cSensor.blue());
+            //telemetry.addData("Red", cSensor.red());
+            //telemetry.addData("Green", cSensor.green());
+            //telemetry.addData("Blue", cSensor.blue());
+            telemetry.addData("ODS Light Det.", ods.getRawLightDetected());
+            //telemetry.addData("Touch Sensor Status", tSensor.isPressed());
+            //telemetry.addData("Value", tSensor.getValue());
+            telemetry.addData("motorL Enc Pos", motorL.getCurrentPosition());
+            telemetry.addData("motorR Enc Pos", motorR.getCurrentPosition());
             telemetry.update();
         }
     }
