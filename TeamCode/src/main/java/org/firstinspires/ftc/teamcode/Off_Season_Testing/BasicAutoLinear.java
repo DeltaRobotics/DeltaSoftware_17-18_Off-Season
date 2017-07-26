@@ -46,12 +46,18 @@ public class BasicAutoLinear extends LinearOpMode {
         waitForStart();
 
 
-        if(stopAtColor(.70, false, beast.leftColor, 10000, beast.motorL, 16, 16, 19, true))
+        /*if(stopAtColor(.70, false, beast.leftColor, 10000, beast.motorL, 16, 16, 19, true))
         {
             telemetry.addData("Result", "Complete");
             telemetry.update();
             sleep(2000);
-        }
+        }*/
+
+        encoderTurn(1.0,400,turnStyle.PIVOT_LEFT_FORWARD,1,true);
+
+        telemetry.addData("Status", "Done with method : encoderTurn");
+        telemetry.update();
+
 
 
     }
@@ -118,180 +124,107 @@ public class BasicAutoLinear extends LinearOpMode {
         }
     }
 
+    /*
+      **********************************************************************************************
+        Method : encoderTurn (public; void)
+        Purpose : for easy turning using encoders as well as multiple styles of turning
+        Author(s) : Emmy Petersen, Laura Evans, and Nolan Eastburn
+        Created on : 7/25/17
+      **********************************************************************************************
+     */
     public void encoderTurn(double turnPower, int encoder, turnStyle turn, double turnPercent, boolean telemetryOn) {
+
+        //This creates variables for use in the encoderTurn method
         int leftEncoderTarget = 0;
         int rightEncoderTarget = 0;
+        double motorLeftSign = 0;
+        double motorRightSign = 0;
+        double motorLeftFrontSign = 0;
+        double motorRightFrontSign = 0;
+        double encoderLeftSign = 0;
+        double encoderRightSign = 0;
+
         if (opModeIsActive()) {
+            //This is setting specific variables for each individual style of turn
             if ((turn == turnStyle.PIVOT_LEFT_FORWARD) || (turn == turnStyle.PIVOT_RIGHT_BACKWARD))
             {
-                tImp = turnImplement.A;
-                leftEncoderTarget = beast.motorL.getCurrentPosition() - Math.abs(encoder);
-                rightEncoderTarget = beast.motorR.getCurrentPosition() - Math.abs(encoder);
+                encoderLeftSign = -1;
+                encoderRightSign = -1;
+                motorLeftFrontSign = -1;
+                motorLeftSign = -1;
+                motorRightFrontSign = -1;
+                motorRightSign = -1;
             }
             else if ((turn == turnStyle.PIVOT_RIGHT_FORWARD) || (turn == turnStyle.PIVOT_LEFT_BACKWARD))
             {
-                tImp = turnImplement.B;
-                leftEncoderTarget = beast.motorL.getCurrentPosition() + Math.abs(encoder);
-                rightEncoderTarget = beast.motorR.getCurrentPosition() + Math.abs(encoder);
+                encoderLeftSign = 1;
+                encoderRightSign = 1;
+                motorRightFrontSign= 1;
+                motorLeftFrontSign = 1;
+                motorRightSign = 1;
+                motorLeftSign = 1;
             }
             else if (turn == turnStyle.PERCENT_LEFT_FORWARD)
             {
-                tImp = turnImplement.C;
-                leftEncoderTarget = beast.motorL.getCurrentPosition() + Math.abs((int) (encoder * turnPercent));
-                rightEncoderTarget = beast.motorR.getCurrentPosition() - Math.abs(encoder);
+                encoderLeftSign = turnPercent;
+                encoderRightSign = -1;
+                motorRightSign = -1;
+                motorLeftSign = turnPercent;
+                motorRightFrontSign = -1;
+                motorLeftFrontSign = turnPercent;
             }
             else if (turn == turnStyle.PERCENT_LEFT_BACKWARD)
             {
-                tImp = turnImplement.D;
-                leftEncoderTarget = beast.motorL.getCurrentPosition() - Math.abs((int) (encoder * turnPercent));
-                rightEncoderTarget = beast.motorR.getCurrentPosition() + Math.abs(encoder);
+                encoderLeftSign = -turnPercent;
+                encoderRightSign = 1;
+                motorLeftFrontSign = -turnPercent;
+                motorRightFrontSign = 1;
+                motorRightSign = 1;
+                motorLeftSign = -turnPercent;
             }
             else if (turn == turnStyle.PERCENT_RIGHT_FORWARD)
             {
-                tImp = turnImplement.E;
-                leftEncoderTarget = beast.motorL.getCurrentPosition() + Math.abs(encoder);
-                rightEncoderTarget = beast.motorR.getCurrentPosition() - Math.abs((int) (encoder * turnPercent));
+                encoderLeftSign = 1;
+                encoderRightSign = -turnPercent;
+                motorLeftFrontSign = 1;
+                motorRightFrontSign = -turnPercent;
+                motorLeftSign = 1;
+                motorRightSign = -turnPercent;
             }
             else if (turn == turnStyle.PERCENT_RIGHT_BACKWARD)
             {
-                tImp = turnImplement.F;
-                leftEncoderTarget = beast.motorL.getCurrentPosition() - Math.abs(encoder);
-                rightEncoderTarget = beast.motorR.getCurrentPosition() + Math.abs((int) (encoder * turnPercent));
+                encoderLeftSign = -1;
+                encoderRightSign = turnPercent;
+                motorLeftFrontSign =-1;
+                motorLeftSign = -1;
+                motorRightFrontSign = turnPercent;
+                motorRightSign = turnPercent;
             }
 
+            //This takes current position + input value to equal the target value
+            leftEncoderTarget = beast.motorL.getCurrentPosition() + ((int) encoderLeftSign * Math.abs(encoder));
+            rightEncoderTarget = beast.motorR.getCurrentPosition() + ((int)(encoderRightSign * Math.abs(encoder)));
+
+            //This tells the motors what the encoder target value
             beast.motorL.setTargetPosition(leftEncoderTarget);
             beast.motorR.setTargetPosition(rightEncoderTarget);
 
+            //This prepares the motors to go to a specific encoder position
             beast.motorL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             beast.motorR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
+            //This prepares the LinearOpMode to run the motors
             runtime.reset();
 
-            if(tImp == turnImplement.A)
-            {
-                beast.motorR.setPower(-turnPower);
-                beast.motorRF.setPower(-turnPower);
-                beast.motorL.setPower(-turnPower);
-                beast.motorLF.setPower(-turnPower);
-            }
-
-
-
-
-
-
-
-            if ((turn == turnStyle.PIVOT_LEFT_FORWARD) || (turn == turnStyle.PIVOT_RIGHT_BACKWARD)) {
-                leftEncoderTarget = beast.motorL.getCurrentPosition() - Math.abs(encoder);
-                rightEncoderTarget = beast.motorR.getCurrentPosition() - Math.abs(encoder);
-
-                beast.motorL.setTargetPosition(leftEncoderTarget);
-                beast.motorR.setTargetPosition(rightEncoderTarget);
-
-                beast.motorL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                beast.motorR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-                runtime.reset();
-
-                beast.motorR.setPower(-turnPower);
-                beast.motorRF.setPower(-turnPower);
-                beast.motorL.setPower(-turnPower);
-                beast.motorLF.setPower(-turnPower);
-            }
-
-            if ((turn == turnStyle.PIVOT_RIGHT_FORWARD) || (turn == turnStyle.PIVOT_LEFT_BACKWARD)) {
-                leftEncoderTarget = beast.motorL.getCurrentPosition() + Math.abs(encoder);
-                rightEncoderTarget = beast.motorR.getCurrentPosition() + Math.abs(encoder);
-
-                beast.motorL.setTargetPosition(leftEncoderTarget);
-                beast.motorR.setTargetPosition(rightEncoderTarget);
-
-                beast.motorL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                beast.motorR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-                runtime.reset();
-
-                beast.motorR.setPower(turnPower);
-                beast.motorRF.setPower(turnPower);
-                beast.motorL.setPower(turnPower);
-                beast.motorLF.setPower(turnPower);
-            }
-
-            if (turn == turnStyle.PERCENT_LEFT_FORWARD) {
-                leftEncoderTarget = beast.motorL.getCurrentPosition() + Math.abs((int) (encoder * turnPercent));
-                rightEncoderTarget = beast.motorR.getCurrentPosition() - Math.abs(encoder);
-
-                beast.motorR.setTargetPosition(rightEncoderTarget);
-                beast.motorL.setTargetPosition(leftEncoderTarget);
-
-                beast.motorR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                beast.motorL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-                runtime.reset();
-
-                beast.motorR.setPower(-turnPower);
-                beast.motorRF.setPower(-turnPower);
-                beast.motorL.setPower(turnPower * turnPercent);
-                beast.motorLF.setPower(turnPower * turnPercent);
-            }
-
-            if (turn == turnStyle.PERCENT_LEFT_BACKWARD) {
-                leftEncoderTarget = beast.motorL.getCurrentPosition() - Math.abs((int) (encoder * turnPercent));
-                rightEncoderTarget = beast.motorR.getCurrentPosition() + Math.abs(encoder);
-
-                beast.motorR.setTargetPosition(rightEncoderTarget);
-                beast.motorL.setTargetPosition(leftEncoderTarget);
-
-                beast.motorR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                beast.motorL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-                runtime.reset();
-
-                beast.motorR.setPower(turnPower);
-                beast.motorRF.setPower(turnPower);
-                beast.motorL.setPower(-turnPower * turnPercent);
-                beast.motorLF.setPower(-turnPower * turnPercent);
-            }
-
-            if (turn == turnStyle.PERCENT_RIGHT_FORWARD) {
-                leftEncoderTarget = beast.motorL.getCurrentPosition() + Math.abs(encoder);
-                rightEncoderTarget = beast.motorR.getCurrentPosition() - Math.abs((int) (encoder * turnPercent));
-
-                beast.motorL.setTargetPosition(leftEncoderTarget);
-                beast.motorR.setTargetPosition(rightEncoderTarget);
-
-                beast.motorL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                beast.motorR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-                runtime.reset();
-
-                beast.motorL.setPower(turnPower);
-                beast.motorLF.setPower(turnPower);
-                beast.motorR.setPower(-turnPower * turnPercent);
-                beast.motorRF.setPower(-turnPower * turnPercent);
-            }
-
-            if (turn == turnStyle.PERCENT_RIGHT_BACKWARD) {
-                leftEncoderTarget = beast.motorL.getCurrentPosition() - Math.abs(encoder);
-                rightEncoderTarget = beast.motorR.getCurrentPosition() + Math.abs((int) (encoder * turnPercent));
-
-                beast.motorL.setTargetPosition(leftEncoderTarget);
-                beast.motorR.setTargetPosition(rightEncoderTarget);
-
-                beast.motorL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                beast.motorR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-                runtime.reset();
-
-                beast.motorL.setPower(-turnPower);
-                beast.motorLF.setPower(-turnPower);
-                beast.motorR.setPower(turnPower * turnPercent);
-                beast.motorRF.setPower(turnPower * turnPercent);
-            }
+            //This tells the motors to run at the power and direction derived from input parameters
+            beast.motorR.setPower(turnPower * motorRightSign);
+            beast.motorRF.setPower(turnPower * motorRightFrontSign);
+            beast.motorL.setPower(turnPower * motorLeftSign);
+            beast.motorLF.setPower(turnPower * motorLeftFrontSign);
 
             while (opModeIsActive() && beast.motorL.isBusy() && beast.motorR.isBusy()) {
                 telemetry.addData("Target Positions", "Running to %7d : %7d", leftEncoderTarget, rightEncoderTarget);
-                telemetry.addData("Encoder Positoins", "Running to %7d : %7d", beast.motorL.getCurrentPosition(), beast.motorR.getCurrentPosition());
+                telemetry.addData("Encoder Positions", "Running to %7d : %7d", beast.motorL.getCurrentPosition(), beast.motorR.getCurrentPosition());
                 telemetry.addData("motorL Power", beast.motorL.getPower());
                 telemetry.addData("motorR Power", beast.motorR.getPower());
                 telemetry.update();
@@ -303,7 +236,7 @@ public class BasicAutoLinear extends LinearOpMode {
             beast.motorR.setPower(0.0);
             beast.motorRF.setPower(0.0);
 
-            //Stops encoders from running
+            //This resets the encoders before future use
             beast.motorL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             beast.motorR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
