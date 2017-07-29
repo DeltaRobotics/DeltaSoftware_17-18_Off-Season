@@ -16,6 +16,7 @@ public class PacmanHardware
     public DcMotor motorRF = null;
     public DcMotor motorLF = null;
 
+
     public ColorSensor leftColor = null;
     public ColorSensor rightColor = null;
 
@@ -30,6 +31,7 @@ public class PacmanHardware
     public DcMotor LEDRed = null;
     public DcMotor LEDGreen = null;
     public DcMotor LEDBlue = null;
+
 
     HardwareMap hwMap = null;
 
@@ -47,6 +49,7 @@ public class PacmanHardware
         motorLF = hwMap.dcMotor.get("motorLF");
         motorRF = hwMap.dcMotor.get("motorRF");
 
+
         launcher = hwMap.dcMotor.get("launcherWheel");
 
         collector = hwMap.dcMotor.get("collector");
@@ -61,6 +64,7 @@ public class PacmanHardware
 
         leftColor = hMap.colorSensor.get("leftColor");
         rightColor = hMap.colorSensor.get("rightColor");
+
 
         motorL.setPower(0.0);
         motorR.setPower(0.0);
@@ -81,5 +85,6 @@ public class PacmanHardware
 
         leftColor.enableLed(true);
         rightColor.enableLed(true);
+
     }
 }

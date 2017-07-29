@@ -53,7 +53,7 @@ public class BasicAutoLinear extends LinearOpMode {
             sleep(2000);
         }*/
 
-        encoderTurn(1.0,400,turnStyle.PIVOT_LEFT_FORWARD,1,true);
+        encoderTurn(1.0,800,turnStyle.PIVOT_LEFT_FORWARD,1,true);
 
         telemetry.addData("Status", "Done with method : encoderTurn");
         telemetry.update();
@@ -223,11 +223,14 @@ public class BasicAutoLinear extends LinearOpMode {
             beast.motorLF.setPower(turnPower * motorLeftFrontSign);
 
             while (opModeIsActive() && beast.motorL.isBusy() && beast.motorR.isBusy()) {
-                telemetry.addData("Target Positions", "Running to %7d : %7d", leftEncoderTarget, rightEncoderTarget);
-                telemetry.addData("Encoder Positions", "Running to %7d : %7d", beast.motorL.getCurrentPosition(), beast.motorR.getCurrentPosition());
-                telemetry.addData("motorL Power", beast.motorL.getPower());
-                telemetry.addData("motorR Power", beast.motorR.getPower());
-                telemetry.update();
+                if(telemetryOn)
+                {
+                    telemetry.addData("Target Positions", "Running to %7d : %7d", leftEncoderTarget, rightEncoderTarget);
+                    telemetry.addData("Encoder Positions", "Running to %7d : %7d", beast.motorL.getCurrentPosition(), beast.motorR.getCurrentPosition());
+                    telemetry.addData("motorL Power", beast.motorL.getPower());
+                    telemetry.addData("motorR Power", beast.motorR.getPower());
+                    telemetry.update();
+                }
             }
 
             //Stops the motors
