@@ -14,7 +14,10 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 @Autonomous (name = "BasicAutoLinear", group = "")
 public class BasicAutoLinear extends LinearOpMode {
     //Declaring an object of the robots hardware
-    PacmanHardware beast = new PacmanHardware();
+    //Choose which specification is needed for testing
+
+    FourMotorJustDriveHardware beast = new FourMotorJustDriveHardware();
+    //PacmanHardware beast = new PacmanHardware();
 
     //Declaring an object of the programs elapsed time
     private ElapsedTime runtime = new ElapsedTime();
@@ -53,7 +56,8 @@ public class BasicAutoLinear extends LinearOpMode {
             sleep(2000);
         }*/
 
-        encoderTurn(1.0,800,turnStyle.PIVOT_LEFT_FORWARD,1,true);
+        //driveEncoder(.75, .75, 400, true);
+        encoderTurn(1.0,3000,turnStyle.PIVOT_LEFT_FORWARD,1,true);
 
         telemetry.addData("Status", "Done with method : encoderTurn");
         telemetry.update();
@@ -71,11 +75,11 @@ public class BasicAutoLinear extends LinearOpMode {
         if (opModeIsActive()) {
             //Calculating the target positions for each motor encoder and setting their target positions to those variables
             if (direction) {
-                leftEncoderTarget = beast.motorL.getCurrentPosition() + Math.abs(encoder);
-                rightEncoderTarget = beast.motorR.getCurrentPosition() - Math.abs(encoder);
-            } else {
                 leftEncoderTarget = beast.motorL.getCurrentPosition() - Math.abs(encoder);
                 rightEncoderTarget = beast.motorR.getCurrentPosition() + Math.abs(encoder);
+            } else {
+                leftEncoderTarget = beast.motorL.getCurrentPosition() + Math.abs(encoder);
+                rightEncoderTarget = beast.motorR.getCurrentPosition() - Math.abs(encoder);
             }
             beast.motorL.setTargetPosition(leftEncoderTarget);
             beast.motorR.setTargetPosition(rightEncoderTarget);
@@ -92,11 +96,11 @@ public class BasicAutoLinear extends LinearOpMode {
             beast.motorR.setPower(rightPower);
 
             if (direction) {
-                beast.motorLF.setPower(leftPower);
-                beast.motorRF.setPower(-rightPower);
-            } else {
                 beast.motorLF.setPower(-leftPower);
                 beast.motorRF.setPower(rightPower);
+            } else {
+                beast.motorLF.setPower(leftPower);
+                beast.motorRF.setPower(-rightPower);
             }
 
             //Verifies that the motors are running and that the opMode is still running
@@ -104,7 +108,7 @@ public class BasicAutoLinear extends LinearOpMode {
                 //Displays target positions of both motor encoders and their current positions
                 //First value is left motor and second value is right motor
                 telemetry.addData("Target Positions", "Running to %7d : %7d", leftEncoderTarget, rightEncoderTarget);
-                telemetry.addData("Encoder Positoins", "Running to %7d : %7d", beast.motorL.getCurrentPosition(), beast.motorR.getCurrentPosition());
+                telemetry.addData("Encoder Positions", "Running to %7d : %7d", beast.motorL.getCurrentPosition(), beast.motorR.getCurrentPosition());
                 telemetry.update();
             }
 
@@ -148,21 +152,21 @@ public class BasicAutoLinear extends LinearOpMode {
             //This is setting specific variables for each individual style of turn
             if ((turn == turnStyle.PIVOT_LEFT_FORWARD) || (turn == turnStyle.PIVOT_RIGHT_BACKWARD))
             {
-                encoderLeftSign = -1;
-                encoderRightSign = -1;
-                motorLeftFrontSign = -1;
-                motorLeftSign = -1;
-                motorRightFrontSign = -1;
-                motorRightSign = -1;
+                encoderLeftSign = 1;
+                encoderRightSign = 1;
+                motorLeftFrontSign = 1;
+                motorLeftSign = 1;
+                motorRightFrontSign = 1;
+                motorRightSign = 1;
             }
             else if ((turn == turnStyle.PIVOT_RIGHT_FORWARD) || (turn == turnStyle.PIVOT_LEFT_BACKWARD))
             {
-                encoderLeftSign = 1;
-                encoderRightSign = 1;
-                motorRightFrontSign= 1;
-                motorLeftFrontSign = 1;
-                motorRightSign = 1;
-                motorLeftSign = 1;
+                encoderLeftSign = -1;
+                encoderRightSign = -1;
+                motorRightFrontSign= -1;
+                motorLeftFrontSign = -1;
+                motorRightSign = -1;
+                motorLeftSign = -1;
             }
             else if (turn == turnStyle.PERCENT_LEFT_FORWARD)
             {
@@ -202,7 +206,7 @@ public class BasicAutoLinear extends LinearOpMode {
             }
 
             //This takes current position + input value to equal the target value
-            leftEncoderTarget = beast.motorL.getCurrentPosition() + ((int) encoderLeftSign * Math.abs(encoder));
+            leftEncoderTarget = beast.motorL.getCurrentPosition() + ((int) (encoderLeftSign * Math.abs(encoder)));
             rightEncoderTarget = beast.motorR.getCurrentPosition() + ((int)(encoderRightSign * Math.abs(encoder)));
 
             //This tells the motors what the encoder target value
@@ -217,20 +221,24 @@ public class BasicAutoLinear extends LinearOpMode {
             runtime.reset();
 
             //This tells the motors to run at the power and direction derived from input parameters
-            beast.motorR.setPower(turnPower * motorRightSign);
-            beast.motorRF.setPower(turnPower * motorRightFrontSign);
-            beast.motorL.setPower(turnPower * motorLeftSign);
-            beast.motorLF.setPower(turnPower * motorLeftFrontSign);
+            double setPowerR = turnPower * motorRightSign;
+            double setPowerRF = turnPower * motorRightFrontSign;
+            double setPowerL = turnPower * motorLeftSign;
+            double setPowerLF = turnPower * motorLeftFrontSign;
+            beast.motorR.setPower(setPowerR);
+            beast.motorRF.setPower(setPowerRF);
+            beast.motorL.setPower(setPowerL);
+            beast.motorLF.setPower(setPowerLF);
 
             while (opModeIsActive() && beast.motorL.isBusy() && beast.motorR.isBusy()) {
-                if(telemetryOn)
-                {
+                //if(telemetryOn)
+                //{
                     telemetry.addData("Target Positions", "Running to %7d : %7d", leftEncoderTarget, rightEncoderTarget);
                     telemetry.addData("Encoder Positions", "Running to %7d : %7d", beast.motorL.getCurrentPosition(), beast.motorR.getCurrentPosition());
                     telemetry.addData("motorL Power", beast.motorL.getPower());
                     telemetry.addData("motorR Power", beast.motorR.getPower());
                     telemetry.update();
-                }
+                //}
             }
 
             //Stops the motors
